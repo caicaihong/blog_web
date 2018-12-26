@@ -1,0 +1,49 @@
+1、on-detele一定要填没有默认值，可选值：
+CASCADE：删除作者信息一并删除作者名下的所有书的信息；
+
+PROTECT：删除作者的信息时，采取保护机制，抛出错误：即不删除Books的内容；
+
+SET_NULL：只有当null=True才将关联的内容置空；
+
+SET_DEFAULT：设置为默认值；
+
+SET( )：括号里可以是函数，设置为自己定义的东西；
+
+DO_NOTHING：字面的意思，啥也不干，你删除你的干我毛线关系
+
+2、将博客页面添加到管理员网站
+在models.py
+from django.contrib import admin
+from models import BlogArticles
+# Register your models here.
+admin.site.register(BlogArticles)
+
+如果要修改看到界面的格式的话，可以新建一个类，adminModel类
+class BlogArticlesAdmin(admin.ModelAdmin):
+	"""docstring for BlogArticlesAdmin"""
+	list_display = ("title","author","publish","body")  
+	list_filter = ("publish","author")
+	# search_fields = ("title","body")
+	# raw_id_fields = ("author",)
+	# date_hierarchy = "publish"
+	# ordering = ["publish","author"]
+
+admin.site.register(BlogArticles,BlogArticlesAdmin)
+注册的第一个参数，根据官方解释是这样子的
+
+如果没有admin class，则是默认的格式
+
+如果有的话，则根据自己定义的参数进行展示，例如list_display 博客可视化数据表显示哪些字段，默认是全部显示
+list_filter  过滤器，django自带的，在后台管理的右侧，可以根据时间去过滤
+search_fields  会出现搜索功能，搜索的范围是title和body
+
+使用  date_hierarchy  进行详细时间筛选的时候 可能出现报错：Database returned an invalid datetime value. Are time zone definitions for your database and pytz installed?
+
+处理方法：  
+命令行直接执行此命令：     [root@mysql ~]#    mysql_tzinfo_to_sql /usr/share/zoneinfo | mysql -u root mysql
+然后重启数据库即可。
+2、在models.py创建数据库模型
+from django.db import models
+from django.contrib.auth.models import User
+from django.utils import timezone
+3、在view.py进行数据库查询操作和html页面操作
