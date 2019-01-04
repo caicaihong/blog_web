@@ -46,4 +46,66 @@ search_fields  会出现搜索功能，搜索的范围是title和body
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
+配置文件：from django.urls import include, path
+在最新的版本中 app_name改为name代替
+编辑 models.py 文件，改变模型。
+运行 python manage.py makemigrations 为模型的改变生成迁移文件。
+运行 python manage.py migrate 来应用数据库迁移。
 3、在view.py进行数据库查询操作和html页面操作
+4、配置
+处理跨域问题：
+ pip install django-cors-headers
+ 在setting中添加CORS_ORIGIN_ALLOW_ALL = True
+
+4、路由问题
+首先在项目的urls里面添加要访问的路径，如：
+from django.contrib import admin
+from django.urls import path,include
+urlpatterns = [
+	path('blog/',include('blog.urls')),
+    path('admin/', admin.site.urls),
+    
+]
+然后具体访问到app views.py里面的方法的话，就在app的urls里面进行配置，如：
+from django.urls import path
+from blog import views
+urlpatterns = [
+    path(r'blog_title',views.blog_title,),
+]
+然后再views里面写方法具体的操作
+有get和post
+get：通过request.GET.get()获取数据
+post：通过request.body获取提交的表单
+例子（要从字节转换成Unicode）：data = json.loads(bytes.decode(request.body))
+
+返回json的形式：
+from django.http import JsonResponse
+return JsonResponse(response)
+
+
+
+
+
+===================VUE使用心得=========================
+1、首先install vue-cli
+2、创建项目 vue init webpack appfront
+3、index.html是页面，其他都是靠组件搭建的，app是第一个app，main是index的vue的js，这里可以是全量，所有的引入都可以在这里引入吗，其他都可以使用，引入外部的js，在index引入，一般建议在index引入，因为是全局变量，都可以使用，在index直接引入类似平常的，如果在组件引入的话，则需要
+import{某个方法或者变量} from ..js
+特别提示：引入jquery，直接引用$会有一些错误提示，但是没事的，但是为了好看，还是要想办法解决，解决办法：
+1）在webpack.base.conf.js里面新建一个变量：var webpack = require('webpack');
+2）在module.exports的最后加入：
+plugins: [
+ new webpack.optimize.CommonsChunkPlugin('common.js'),
+ new webpack.ProvidePlugin({
+ jQuery: "jquery",
+ $: "jquery"
+ })]
+3）在main.js里通过 import $ from 'jquery',这样子就可以直接使用$，则不会报错了。
+
+3、vue使用element-ui
+在mian.js中：
+1.在main.js中引入element相关的js和css
+import ElementUI from 'element-ui'
+import 'element-ui/lib/theme-default/index.css'
+一些跟vue有关联的框架或者用法不属于vue本身的都需要用vue.use()去注册才可以使用
+Vue.use(ElementUI)
